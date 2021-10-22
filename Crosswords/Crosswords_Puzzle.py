@@ -142,11 +142,7 @@ def recursive_backtracking(puzzle, numBlocked, width, height):
 def mostConstrained(patterns, hwords, vwords):
     result = (0, 0, 0, 99999)
     for x in hwords:
-        # if "-" in hwords[x]:
-        #list = ["" for z in range(len(hwords[x]))]
         aset = set(patterns["-"*len(hwords[x])])
-        #alist = patterns["-"*len(hwords[x])]
-        # print(alist)
         for y in range(len(hwords[x])):
             if hwords[x][y] != "-":
                 pattern = "-"*len(hwords[x])
@@ -154,36 +150,17 @@ def mostConstrained(patterns, hwords, vwords):
                 if pattern not in patterns:
                     return None
                 aset = aset.intersection(set(patterns[pattern]))
-                #list[y] = set(patterns[pattern])
-                #anotherlist = copy.deepcopy(alist)
-                #alist = anotherlist + patterns[pattern]
-                # print(alist)
-        #aset = aset.intersection(*list)
-        # print(aset)
-        # print(aset)
         if len(aset) < result[3] and "-" in hwords[x]:
             result = (x, "H", hwords[x], len(aset), aset)
-    # print("V")
     for x in vwords:
-        # if "-" in vwords[x]:
-        #list = ["" for z in range(len(vwords[x]))]
         aset = set(patterns["-"*len(vwords[x])])
-        #alist = patterns["-"*len(vwords[x])]
-        # print(alist)
-        # print(aset)
         for y in range(len(vwords[x])):
             if vwords[x][y] != "-":
                 pattern = "-"*len(vwords[x])
                 pattern = pattern[0:y] + vwords[x][y] + pattern[y+1:]
-                # print(pattern)
                 if pattern not in patterns:
                     return None
-                #list[y] = set(patterns[pattern])
                 aset = aset.intersection(set(patterns[pattern]))
-                #anotherlist = copy.deepcopy(alist)
-                #alist = anotherlist + patterns[pattern]
-        # print(aset)
-        #aset = aset.intersection(*list)
         if len(aset) < result[3] and "-" in vwords[x]:
             result = (x, "V", vwords[x], len(aset), aset)
     return result
@@ -246,17 +223,9 @@ def addWord(puzzle, word, index, orientation, width):
 
 def findGoodWords(word):
     c = 0
-    # print(words)
     for x in word:
         c += lettersDict[x]
-        #num = 15371*x.count('E') + 10491*x.count('S') + 2*x.count('R') + 2*x.count('A') + 2*x.count('I') + x.count('T')  + x.count('N') + x.count('O') + -2*x.count('V') + -5*x.count('J') + -10*x.count('X') + -10*x.count('Z') + -10*x.count('Q')
-        #num = 3*x.count('E') + 2*x.count('S') + 2*x.count('A') + 2*x.count('I') + 2*x.count('T') + 2*x.count('O') + 2*x.count('N') + -3*x.count('X') + -3*x.count('Z') + -3*x.count('Q')
     return c
-    # print(result)
-    # result.sort(reverse=True)
-    # print(result)
-    # print(result)
-    # return result
 
 
 def solve_recursive(puzzle, patterns, hwords, vwords, width, height, dictLines):
@@ -265,47 +234,34 @@ def solve_recursive(puzzle, patterns, hwords, vwords, width, height, dictLines):
 
 def solve_backtracking(puzzle, patterns, hwords, vwords, usedWords, width, height, dictLines):
     print(display(height, width, puzzle))
-    # print(dictLines)
     if OPENCHAR not in puzzle:
         return puzzle
     mostC = mostConstrained(patterns, hwords, vwords)
     if mostC == None:
         return None
     goodWords = list(mostC[4])
-    # print(goodWords)
     goodWords.sort(key=lambda word: findGoodWords(word), reverse=True)
-    # print(goodWords)
     for x in goodWords:
         if x in usedWords:
             continue
-        #board = copy.deepcopy(puzzle)
-        #temp = copy.deepcopy(usedWords)
         puzzle = addWord(puzzle, x, mostC[0], mostC[1], width)
         hwords = horizontal(puzzle, width, dictLines)
-        # print(hwords)
         vwords = vertical(puzzle, width, dictLines)
-        # print(vwords)
         for y in hwords.values():
-            # if "-" not in y:
             if y not in dictLines and "-" not in y:
                 return None
             else:
                 usedWords.add(y)
         for y in vwords.values():
-            # if "-" not in y:
             if y not in dictLines and "-" not in y:
                 return None
             else:
                 usedWords.add(y)
-        # usedWords.add(x[1])
         result = solve_backtracking(
             puzzle, patterns, hwords, vwords, usedWords, width, height, dictLines)
         if result != None:
             return result
-        #puzzle = board
-        #usedWords = temp
         usedWords.remove(x)
-    # print("NONE")
     return None
 
 
@@ -364,13 +320,9 @@ def main():
     hwords = horizontal(puzzle, width, dictLines)
     vwords = vertical(puzzle, width, dictLines)
     allPatterns = patterns(dictLines)
-    # print(lettersDict)
-    #print(sorted(lettersDict.items(), reverse=True, key = lambda kv:(kv[1], kv[0])))
-    # print(patterns(dictLines))
     puzzle = solve_recursive(puzzle, allPatterns, hwords,
                              vwords, width, height, dictLines)
     print(display(height, width, puzzle))
-    #print(mostConstrained(dict, hwords, vwords))
 
 
 if __name__ == '__main__':
